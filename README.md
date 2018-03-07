@@ -387,6 +387,106 @@ invoker.action()
 >
 > **Source: [wikipedia.org](https://en.wikipedia.org/wiki/State_pattern)**
 
+**[Kotlin example:](Kotlin/src/State.kt)**
+
+```kotlin
+interface State {
+
+    fun handle(context: Context)
+
+}
+
+class Context {
+
+    var state: State? = null
+
+    fun request() {
+        state?.handle(this)
+    }
+
+}
+
+class StartState : State {
+
+    override fun handle(context: Context) {
+        println("Start state")
+        context.state = this
+    }
+
+}
+
+class StopState : State {
+
+    override fun handle(context: Context) {
+        println("Stop state")
+        context.state = this
+    }
+
+}
+```
+
+**[Kotlin usage:](Kotlin/src/State.kt)**
+
+```kotlin
+val context = Context()
+
+context.state = StartState()
+context.request()
+
+context.state = StopState()
+context.request()
+```
+
+**[Swift example:](Swift/State.playground/Contents.swift)**
+
+```swift
+protocol State {
+    
+    func handle(_ context: Context)
+    
+}
+
+class Context {
+    
+    var state: State? = nil
+    
+    func request() {
+        state?.handle(self)
+    }
+    
+}
+
+final class StartState: State {
+    
+    func handle(_ context: Context) {
+        print("Start state")
+        context.state = self
+    }
+    
+}
+
+final class StopState: State {
+    
+    func handle(_ context: Context) {
+        print("Stop state")
+        context.state = self
+    }
+    
+}
+```
+
+**[Swift usage:](Swift/State.playground/Contents.swift)**
+
+```swift
+let context = Context()
+
+context.state = StartState()
+context.request()
+
+context.state = StopState()
+context.request()
+```
+
 #### [Chain of Responsibility](#chain-of-responsibility)
 > In object-oriented design, the chain-of-responsibility pattern is a design pattern consisting of a source of command objects and a series of processing objects.
 >

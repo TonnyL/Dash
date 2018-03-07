@@ -24,12 +24,12 @@ Design patterns in [Kotlin](https://github.com/JetBrains/kotlin) and [Swift](htt
 	- [Facade](#facade)
 	- [Protection Proxy](#protection-proxy)
 
-### [Behavioral Patterns](#)
+### [Behavioral Patterns](#behavioral-patterns)
 > In software engineering, behavioral design patterns are design patterns that identify common communication patterns between objects and realize these patterns. 
 > 
 > **Source: [wikipedia.org](https://en.wikipedia.org/wiki/Behavioral_pattern)**
 
-#### [Observer](#)
+#### [Observer](#observer)
 > The observer pattern is a software design pattern in which an object, called the subject, maintains a list of its dependents, called observers, and notifies them automatically of any state changes, usually by calling one of their methods.
 > 
 > **Source: [wikipedia.org](https://en.wikipedia.org/wiki/Observer_pattern)**
@@ -184,9 +184,100 @@ subject.removeObserver(0)
 subject.doSomething()
 ```
 
-#### [Strategy](#)
+#### [Strategy](#strategy)
+> In computer programming, the strategy pattern (also known as the policy pattern) is a behavioral software design pattern that enables selecting an algorithm at runtime. 
+> 
+> **Source: [wikipedia.org]()**
 
-#### [Command](#)
+**[Kotlin example:](Kotlin/src/Strategy.kt)**
+
+```kotlin
+interface Strategy {
+
+    fun calculate(a: Int, b: Int): Int
+
+}
+
+class AddStrategy : Strategy {
+
+    override fun calculate(a: Int, b: Int): Int = a + b
+
+}
+
+class SubtractStrategy : Strategy {
+
+    override fun calculate(a: Int, b: Int): Int = a - b
+
+}
+
+class Calculator(private val strategy: Strategy) {
+
+    fun calculate(a: Int, b: Int): Int = strategy.calculate(a, b)
+
+}
+```
+
+**[Kotlin usage:](Kotlin/src/Strategy.kt)**
+
+```kotlin
+val add = Calculator(AddStrategy())
+val subtract = Calculator(SubtractStrategy())
+
+println(add.calculate(1, 2))
+println(subtract.calculate(1, 2))
+```
+
+**[Swift example:](Swift/Strategy.playground/Contents.swift)**
+
+```swift
+protocol Strategy {
+    
+    func calculate(_ a: Int, _ b: Int) -> Int
+    
+}
+
+final class AddStrategy: Strategy {
+    
+    func calculate(_ a: Int, _ b: Int) -> Int {
+        return a + b
+    }
+    
+}
+
+final class SubtractStrategy: Strategy {
+    
+    func calculate(_ a: Int, _ b: Int) -> Int {
+        return a - b
+    }
+    
+}
+
+class Calculator {
+    
+    private let strategy: Strategy
+    
+    init(strategy: Strategy) {
+        self.strategy = strategy
+    }
+    
+    func calculate(_ a: Int, _ b: Int) -> Int {
+        return strategy.calculate(a, b)
+    }
+    
+}
+```
+
+**[Swift usage:](Swift/Command.playground/Contents.swift)**
+
+```swift
+let add = Calculator(strategy: AddStrategy())
+let subtract = Calculator(strategy: SubtractStrategy())
+
+print(add.calculate(1, 2))
+print(subtract.calculate(1, 2))
+```
+
+#### [Command](#command)
 > In object-oriented programming, the command pattern is a behavioral design pattern in which an object is used to encapsulate all information needed to perform an action or trigger an event at a later time.
 > 
 > **Source: [wikipedia.org](https://en.wikipedia.org/wiki/Command_pattern)**
@@ -291,25 +382,294 @@ let invoker: Invoker = Invoker(command: command)
 invoker.action()
 ```
 
-#### [State](#)
+#### [State](#state)
+> The state pattern is a behavioral software design pattern that implements a state machine in an object-oriented way. 
+>
+> **Source: [wikipedia.org](https://en.wikipedia.org/wiki/State_pattern)**
 
-#### [Chain of Responsibility](#)
+#### [Chain of Responsibility](#chain-of-responsibility)
+> In object-oriented design, the chain-of-responsibility pattern is a design pattern consisting of a source of command objects and a series of processing objects.
+>
+> **Source: [wikipedia.org](https://en.wikipedia.org/wiki/Chain-of-responsibility_pattern)**
 
-### [Creational Patterns](#)
+### [Creational Patterns](#creational-patterns)
 > In software engineering, creational design patterns are design patterns that deal with object creation mechanisms, trying to create objects in a manner suitable to the situation. 
 > 
 > **Source: [wikipedia.org](https://en.wikipedia.org/wiki/Creational_pattern)**
 
-#### [Visitor](#)
+#### [Visitor](#visitor)
+> In object-oriented programming and software engineering, the visitor design pattern is a way of separating an algorithm from an object structure on which it operates. 
+>
+> **Source: [wikipedia.org](https://en.wikipedia.org/wiki/Visitor_pattern)**
 
-#### [Builder](#)
+#### [Builder](#builder)
 > The Builder design pattern is a creational design pattern, designed to provide a flexible design solution to various object creation problems in Object-Oriented software. 
 > 
 > **Source: [wikipedia.org](https://en.wikipedia.org/wiki/Builder_pattern)**
 
-#### [Factory Method](#)
+**[Kotlin example:](Kotlin/src/Builder.kt)**
 
-#### [Singleton](#)
+```kotlin
+data class Computer(
+        var cpu: String? = null,
+        var mainBoard: String? = null,
+        var memory: String? = null,
+        var graphicsCard: String? = null,
+        var nic: String? = null,
+        var soundCard: String? = null
+)
+
+abstract class Builder {
+
+    private val computer = Computer()
+
+    abstract fun setCpu()
+
+    abstract fun setMainBoard()
+
+    abstract fun setMemory()
+
+    abstract fun setGraphicsCard()
+
+    abstract fun setNic()
+
+    abstract fun setSoundCard()
+
+    open fun build(): Computer = computer
+
+}
+
+class AwesomeComputerBuilder : Builder() {
+
+    private val awesomeComputer = Computer()
+
+    override fun setCpu() {
+        awesomeComputer.cpu = "👍 cpu"
+    }
+
+    override fun setMainBoard() {
+        awesomeComputer.mainBoard = "👍 main board"
+    }
+
+    override fun setMemory() {
+        awesomeComputer.memory = "👍 memory"
+    }
+
+    override fun setGraphicsCard() {
+        awesomeComputer.graphicsCard = "👍 graphics card"
+    }
+
+    override fun setNic() {
+        awesomeComputer.nic = "👍 nic"
+    }
+
+    override fun setSoundCard() {
+        awesomeComputer.soundCard = "👍 sound card"
+    }
+
+    override fun build(): Computer = awesomeComputer
+
+}
+
+class JunkComputerBuilder : Builder() {
+
+    private val junkComputer = Computer()
+
+    override fun setCpu() {
+        junkComputer.cpu = "👎 cpu"
+    }
+
+    override fun setMainBoard() {
+        junkComputer.mainBoard = "👎 main board"
+    }
+
+    override fun setMemory() {
+        junkComputer.memory = "👎 memory"
+    }
+
+    override fun setGraphicsCard() {
+        junkComputer.graphicsCard = "👎 graphics card"
+    }
+
+    override fun setNic() {
+        junkComputer.nic = "👎 nic"
+    }
+
+    override fun setSoundCard() {
+        junkComputer.soundCard = "👎 sound card"
+    }
+
+    override fun build(): Computer = junkComputer
+
+}
+
+class Director {
+
+    fun construct(builder: Builder) {
+        builder.setCpu()
+        builder.setMainBoard()
+        builder.setMemory()
+        builder.setGraphicsCard()
+        builder.setNic()
+        builder.setSoundCard()
+    }
+
+}
+```
+
+**[Kotlin usage:](Kotlin/src/Builder.kt)**
+
+```kotlin
+val director = Director()
+val awesomeBuilder = AwesomeComputerBuilder()
+val junkBuilder = JunkComputerBuilder()
+
+director.construct(awesomeBuilder)
+val awesomeComputer = awesomeBuilder.build()
+director.construct(junkBuilder)
+val junkComputer = junkBuilder.build()
+
+println(awesomeComputer)
+println(junkComputer)
+```
+
+**[Swift example:](Swift/Builder.playground/Contents.swift)**
+
+```swift
+struct Computer {
+    
+    var cpu: String? = nil
+    var mainBoard: String? = nil
+    var memory: String? = nil
+    var graphicsCard: String? = nil
+    var nic: String? = nil
+    var soundCard: String? = nil
+    
+}
+
+class Builder {
+    
+    private var computer: Computer = Computer()
+    
+    func setCpu() {}
+    
+    func setMainBoard() {}
+    
+    func setMemory() {}
+    
+    func setGraphicsCard() {}
+    
+    func setNic() {}
+    
+    func setSoundCard() {}
+    
+    func build() -> Computer {
+        return computer
+    }
+    
+}
+
+class AwesomeComputerBuilder: Builder {
+    
+    var awesomeComputer: Computer = Computer()
+    
+    override func setCpu() {
+        awesomeComputer.cpu = "👍 cpu"
+    }
+    
+    override func setMainBoard() {
+        awesomeComputer.mainBoard = "👍 main board"
+    }
+    
+    override func setMemory() {
+        awesomeComputer.memory = "👍 memory"
+    }
+    
+    override func setGraphicsCard() {
+        awesomeComputer.graphicsCard = "👍 graphics card"
+    }
+    
+    override func setNic() {
+        awesomeComputer.nic = "👍 nic"
+    }
+    
+    override func setSoundCard() {
+        awesomeComputer.soundCard = "👍 sound card"
+    }
+    
+    override func build() -> Computer {
+        return awesomeComputer
+    }
+    
+}
+
+class JunkComputerBuilder : Builder {
+    
+    private var junkComputer: Computer = Computer()
+    
+    override func setCpu() {
+        junkComputer.cpu = "👎 cpu"
+    }
+    
+    override func setMainBoard() {
+        junkComputer.mainBoard = "👎 main board"
+    }
+    
+    override func setMemory() {
+        junkComputer.memory = "👎 memory"
+    }
+    
+    override func setGraphicsCard() {
+        junkComputer.graphicsCard = "👎 graphics card"
+    }
+    
+    override func setNic() {
+        junkComputer.nic = "👎 nic"
+    }
+    
+    override func setSoundCard() {
+        junkComputer.soundCard = "👎 sound card"
+    }
+    
+    override func build() -> Computer {
+        return junkComputer
+    }
+    
+}
+
+class Director {
+    
+    func construct(_ builder: Builder) {
+        builder.setCpu()
+        builder.setMainBoard()
+        builder.setMemory()
+        builder.setGraphicsCard()
+        builder.setNic()
+        builder.setSoundCard()
+    }
+    
+}
+```
+
+**[Swift usage:](Swift/Builder.playground/Contents.swift)**
+
+```swift
+let director = Director()
+let awesomeBuilder = AwesomeComputerBuilder()
+let junkBuilder = JunkComputerBuilder()
+
+director.construct(awesomeBuilder)
+let awesomeComputer: Computer? = awesomeBuilder.build()
+director.construct(junkBuilder)
+let junkComputer: Computer? = junkBuilder.build()
+
+print(awesomeBuilder)
+print(junkComputer)
+```
+
+#### [Factory Method](#factory-method)
+
+#### [Singleton](#singleton)
 > In software engineering, the singleton pattern is a software design pattern that restricts the instantiation of a class to one object. 
 > 
 > **Source: [wikipedia.org](https://en.wikipedia.org/wiki/Singleton_pattern)**
@@ -358,20 +718,35 @@ class Singleton {
 Singleton.getInstance().action()
 ```
 
-#### [Abstract Factory](#)
+#### [Abstract Factory](#abstract-factory)
+> The abstract factory pattern provides a way to encapsulate a group of individual factories that have a common theme without specifying their concrete classes.
+> 
+> **Source: [wikipedia.org](https://en.wikipedia.org/wiki/Abstract_factory_pattern)**
 
-### [Structural Patterns](#)
+### [Structural Patterns](#structural-patterns)
 > In software engineering, structural design patterns are design patterns that ease the design by identifying a simple way to realize relationships between entities.
 > 
 > **Source: [wikipedia.org](https://en.wikipedia.org/wiki/Structural_pattern)**
 
-#### [Adapter](#)
+#### [Adapter](#adapter)
+> In software engineering, the adapter pattern is a software design pattern (also known as Wrapper, an alternative naming shared with the Decorator pattern) that allows the interface of an existing class to be used as another interface.
+> 
+> **Source: [wikipedia.org](https://en.wikipedia.org/wiki/Adapter_pattern)**
 
-#### [Decorator](#)
+#### [Decorator](#decorator)
+> In object-oriented programming, the decorator pattern is a design pattern that allows behavior to be added to an individual object, either statically or dynamically, without affecting the behavior of other objects from the same class.
+> 
+> **Source: [wikipedia.org](https://en.wikipedia.org/wiki/Decorator_pattern)**
 
-#### [Facade](#)
+#### [Facade](#facade)
+> A facade is an object that provides a simplified interface to a larger body of code, such as a class library.
+> 
+> **Source: [wikipedia.org](https://en.wikipedia.org/wiki/Facade_pattern)**
 
-#### [Protection Proxy](#)
+#### [Proxy](#proxy)
+> The Proxy design pattern is one of the twenty-three well-known GoF design patterns that describe how to solve recurring design problems to design flexible and reusable object-oriented software, that is, objects that are easier to implement, change, test, and reuse.
+>
+> **Source: [wikipedia.org](https://en.wikipedia.org/wiki/Proxy_pattern)**
 
 ## License
-Dash is under an MIT license. See the LICENSE for more information.
+Dash is under an MIT license. See the [LICENSE](LICENSE) for more information.

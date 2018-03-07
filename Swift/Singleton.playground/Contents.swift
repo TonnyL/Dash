@@ -8,6 +8,10 @@ class Singleton {
         return INSTANCE
     }
     
+    func action() {
+        print("action")
+    }
+    
 }
 
 let singleton1 = Singleton.getInstance()
@@ -18,3 +22,5 @@ if (singleton1 === singleton2) {
 } else {
     print("error")
 }
+
+singleton1.action()

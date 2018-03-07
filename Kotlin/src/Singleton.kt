@@ -1,7 +1,13 @@
 import org.junit.Assert
 import org.junit.Test
 
-object Singleton
+object Singleton {
+
+    fun action() {
+        println("action")
+    }
+
+}
 
 class SingletonTest {
 
@@ -11,6 +17,8 @@ class SingletonTest {
         val singleton2 = Singleton
 
         Assert.assertTrue(singleton1 == singleton2)
+
+        singleton1.action()
     }
 
 }

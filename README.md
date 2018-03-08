@@ -492,15 +492,400 @@ context.request()
 >
 > **Source: [wikipedia.org](https://en.wikipedia.org/wiki/Chain-of-responsibility_pattern)**
 
-### [Creational Patterns](#creational-patterns)
-> In software engineering, creational design patterns are design patterns that deal with object creation mechanisms, trying to create objects in a manner suitable to the situation. 
-> 
-> **Source: [wikipedia.org](https://en.wikipedia.org/wiki/Creational_pattern)**
+**[Kotlin example:](Kotlin/src/ChainOfResponsibility.kt)**
+
+```kotlin
+class Level(level: Int) {
+
+    var level = 1
+
+    init {
+        this.level = level
+    }
+
+}
+
+class Request(var level: Level) {
+
+    fun getLevel(): Int {
+        return level.level
+    }
+
+}
+
+class Response(val message: String) {
+
+    init {
+        println("Done")
+    }
+
+}
+
+abstract class AbstractHandler {
+
+    private var nextHandler: AbstractHandler? = null
+
+    protected abstract val handlerLevel: Int
+
+    fun handlerRequest(request: Request): Response? {
+        var response: Response? = null
+
+        if (handlerLevel == request.getLevel()) {
+            response = response(request)
+        } else {
+            if (nextHandler != null) {
+                println("To next handler")
+                response = nextHandler?.handlerRequest(request)
+            } else {
+                println("No more request")
+            }
+        }
+
+        return response
+    }
+
+    fun setNextHandler(handler: AbstractHandler) {
+        nextHandler = handler
+    }
+
+    protected abstract fun response(request: Request): Response
+
+}
+
+class ConcreteHandlerA : AbstractHandler() {
+
+    override val handlerLevel: Int
+        get() = 0
+
+    override fun response(request: Request): Response {
+        println("Handled by ConcreteHandlerA")
+        return Response("Response A")
+    }
+
+}
+
+class ConcreteHandlerB : AbstractHandler() {
+
+    override val handlerLevel: Int
+        get() = 1
+
+    override fun response(request: Request): Response {
+        println("Handled by ConcreteHandlerB")
+        return Response("Response B")
+    }
+
+}
+```
+
+**[Kotlin usage:](Kotlin/src/ChainOfResponsibility.kt)**
+
+```kotlin
+val handler1 = ConcreteHandlerA()
+        val handler2 = ConcreteHandlerB()
+
+        handler1.setNextHandler(handler2)
+        val response1 = handler1.handlerRequest(Request(Level(0)))
+        println("==== Response message -> ${response1?.message} ====")
+
+        val response2 = handler1.handlerRequest(Request(Level(1)))
+        println("==== Response message -> ${response2?.message} ====")
+```
+
+**[Swift example:](Swift/ChainOfResponsibility.playground/Contents.swift)**
+
+```swift
+class Level {
+    
+    var level: Int = 1
+    
+    init(_ level: Int) {
+        self.level = level
+    }
+    
+}
+
+class Request {
+    
+    var level: Level
+    
+    init(_ level: Level) {
+        self.level = level
+    }
+    
+    func getLevel() -> Int {
+        return level.level
+    }
+    
+}
+
+class Response {
+    
+    let message: String
+    
+    init(_ message: String) {
+        self.message = message
+        print("Done")
+    }
+    
+}
+
+class AbstractHandler {
+    
+    private var nextHandler: AbstractHandler? = nil
+    
+    var handlerLevel: Int = 0
+    
+    func handlerRequest(_ request: Request) -> Response? {
+        var resp: Response? = nil
+        
+        if handlerLevel == request.getLevel() {
+            resp = response(request)
+        } else {
+            if nextHandler != nil {
+                print("To next handler")
+                resp = nextHandler?.handlerRequest(request)
+            } else {
+                print("No more request")
+            }
+        }
+        
+        return resp
+    }
+    
+    func setNextHandler(_ handler: AbstractHandler) {
+        nextHandler = handler
+    }
+    
+    func response(_ request: Request) -> Response? {
+        return nil
+    }
+    
+}
+
+class ConcreteHandlerA: AbstractHandler {
+    
+    override var handlerLevel: Int {
+        get {
+            return 0
+        }
+        set {
+            
+        }
+    }
+    
+    override func response(_ request: Request) -> Response? {
+        print("Handled by ConcreteHandlerA")
+        return Response("Response A")
+    }
+    
+}
+
+class ConcreteHandlerB: AbstractHandler {
+    
+    override var handlerLevel: Int {
+        get {
+            return 1
+        }
+        set {
+            
+        }
+    }
+    
+    override func response(_ request: Request) -> Response? {
+        print("Handled by ConcreteHandlerB")
+        return Response("Response B")
+    }
+    
+}
+```
+
+**[Swift usage:](Swift/ChainOfResponsibility.playground/Contents.swift)**
+
+```swift
+let handler1 = ConcreteHandlerA()
+let handler2 = ConcreteHandlerB()
+
+handler1.setNextHandler(handler2)
+let response1 = handler1.handlerRequest(Request(Level(0)))
+print("==== Response message -> \(response1?.message ?? "") ====")
+
+let response2 = handler1.handlerRequest(Request(Level(1)))
+print("==== Response message -> \(response2?.message ?? "") ====")
+```
 
 #### [Visitor](#visitor)
 > In object-oriented programming and software engineering, the visitor design pattern is a way of separating an algorithm from an object structure on which it operates. 
 >
 > **Source: [wikipedia.org](https://en.wikipedia.org/wiki/Visitor_pattern)**
+
+**[Kotlin example:](Kotlin/src/Visitor.kt)**
+
+```kotlin
+interface Visitor {
+
+    fun visit(elementA: ConcreteElementA)
+
+    fun visit(elementB: ConcreteElementB)
+
+}
+
+interface Visitable {
+
+    fun accept(visitor: Visitor)
+
+}
+
+class ConcreteVisitorA : Visitor {
+
+    override fun visit(elementA: ConcreteElementA) {
+        elementA.operate()
+    }
+
+    override fun visit(elementB: ConcreteElementB) {
+        elementB.operate()
+    }
+
+}
+
+class ConcreteVisitorB : Visitor {
+
+    override fun visit(elementA: ConcreteElementA) {
+        elementA.operate()
+    }
+
+    override fun visit(elementB: ConcreteElementB) {
+        elementB.operate()
+    }
+
+}
+
+class ConcreteElementA : Visitable {
+
+    override fun accept(visitor: Visitor) {
+        visitor.visit(this)
+    }
+
+    fun operate() {
+        println("ConcreteElementA ....")
+    }
+
+}
+
+class ConcreteElementB : Visitable {
+
+    override fun accept(visitor: Visitor) {
+        visitor.visit(this)
+    }
+
+    fun operate() {
+        println("ConcreteElementB ....")
+    }
+
+}
+```
+
+**[Kotlin usage:](Kotlin/src/Visitor.kt)**
+
+```kotlin
+val visitor1 = ConcreteVisitorA()
+        val list1 = arrayListOf(ConcreteElementA(), ConcreteElementB())
+        list1.forEach {
+            it.accept(visitor1)
+        }
+
+        val visitor2 = ConcreteVisitorB()
+        val list2 = arrayListOf(ConcreteElementB())
+        list2.forEach {
+            it.accept(visitor2)
+        }
+```
+
+**[Swift example:](Swift/Visitor.playground/Contents.swift)**
+
+```swift
+protocol Visitor {
+    
+    func visit(_ elementA: ConcreteElementA)
+    
+    func visit(_ elementB: ConcreteElementB)
+    
+}
+
+protocol Visitable {
+    
+    func accept(_ visitor: Visitor)
+    
+}
+
+class ConcreteVisitorA: Visitor {
+    
+    func visit(_ elementA: ConcreteElementA) {
+        elementA.operate()
+    }
+    
+    func visit(_ elementB: ConcreteElementB) {
+        elementB.operate()
+    }
+    
+}
+
+class ConcreteVisitorB: Visitor {
+    
+    func visit(_ elementA: ConcreteElementA) {
+        elementA.operate()
+    }
+    
+    func visit(_ elementB: ConcreteElementB) {
+        elementB.operate()
+    }
+    
+}
+
+class ConcreteElementA: Visitable {
+    
+    func accept(_ visitor: Visitor) {
+        visitor.visit(self)
+    }
+    
+    func operate() {
+        print("ConcreteElementA ....")
+    }
+    
+}
+
+class ConcreteElementB: Visitable {
+    
+    func accept(_ visitor: Visitor) {
+        visitor.visit(self)
+    }
+    
+    func operate() {
+        print("ConcreteElementB ....")
+    }
+    
+}
+```
+
+**[Swift usage:](Swift/Visitor.playground/Contents.swift)**
+
+```swift
+let visitor1 = ConcreteVisitorA()
+let list1 = Array<Visitable>.init(arrayLiteral: ConcreteElementA(), ConcreteElementB())
+list1.forEach {
+    $0.accept(visitor1)
+}
+
+let visitor2 = ConcreteVisitorB()
+let list2 = Array<Visitable>.init(arrayLiteral: ConcreteElementB())
+list2.forEach {
+    $0.accept(visitor2)
+}
+```
+
+### [Creational Patterns](#creational-patterns)
+> In software engineering, creational design patterns are design patterns that deal with object creation mechanisms, trying to create objects in a manner suitable to the situation. 
+> 
+> **Source: [wikipedia.org](https://en.wikipedia.org/wiki/Creational_pattern)**
 
 #### [Builder](#builder)
 > The Builder design pattern is a creational design pattern, designed to provide a flexible design solution to various object creation problems in Object-Oriented software. 
@@ -768,6 +1153,121 @@ print(junkComputer)
 ```
 
 #### [Factory Method](#factory-method)
+> In class-based programming, the factory method pattern is a creational pattern that uses factory methods to deal with the problem of creating objects without having to specify the exact class of the object that will be created. 
+> 
+> **Source: [wikipedia.org](https://en.wikipedia.org/wiki/Factory_method_pattern)**
+
+**[Kotlin example:](Kotlin/src/FactoryMethod.kt)**
+
+```kotlin
+interface Factory {
+
+    fun manufacture(): Product
+
+}
+
+interface Product {
+
+    fun action()
+
+}
+
+class FactoryA : Factory {
+
+    override fun manufacture(): Product = ProductA()
+
+}
+
+class FactoryB : Factory {
+
+    override fun manufacture(): Product = ProductB()
+
+}
+
+class ProductA : Product {
+
+    override fun action() {
+        println("ProductA")
+    }
+
+}
+
+class ProductB : Product {
+
+    override fun action() {
+        println("ProductB")
+    }
+
+}
+```
+
+**[Kotlin usage:](Kotlin/src/FactoryMethod.kt)**
+
+```kotlin
+val factoryA = FactoryA()
+factoryA.manufacture().action()
+
+val factoryB = FactoryB()
+factoryB.manufacture().action()
+```
+
+**[Swift example:](Swift/FactoryMethod.playground/Contents.swift)**
+
+```swift
+protocol Factory {
+    
+    func manufacture() -> Product
+    
+}
+
+protocol Product {
+    
+    func action()
+    
+}
+
+class FactoryA: Factory {
+    
+    func manufacture() -> Product {
+        return ProductA()
+    }
+    
+}
+
+class FactoryB: Factory {
+    
+    func manufacture() -> Product {
+        return ProductB()
+    }
+    
+}
+
+class ProductA: Product {
+    
+    func action() {
+        print("ProductA")
+    }
+    
+}
+
+class ProductB : Product {
+    
+    func action() {
+        print("ProductB")
+    }
+    
+}
+```
+
+**[Swift example:](Swift/FactoryMethod.playground/Contents.swift)**
+
+```swift
+let factoryA = FactoryA()
+factoryA.manufacture().action()
+
+let factoryB = FactoryB()
+factoryB.manufacture().action()
+```
 
 #### [Singleton](#singleton)
 > In software engineering, the singleton pattern is a software design pattern that restricts the instantiation of a class to one object. 
@@ -822,6 +1322,185 @@ Singleton.getInstance().action()
 > The abstract factory pattern provides a way to encapsulate a group of individual factories that have a common theme without specifying their concrete classes.
 > 
 > **Source: [wikipedia.org](https://en.wikipedia.org/wiki/Abstract_factory_pattern)**
+
+**[Kotlin example:](Kotlin/src/AbstractFactory.kt)**
+
+```kotlin
+interface AbstractFactory {
+
+    fun manufactureContainer(): AbstractProduct
+
+    fun manufactureMould(): AbstractProduct
+
+}
+
+interface AbstractProduct {
+
+    fun action()
+
+}
+
+abstract class ContainerProduct : AbstractProduct
+
+abstract class MouldProduct : AbstractProduct
+
+class ContainerProductA : ContainerProduct() {
+
+    override fun action() {
+        println("ContainerProductA")
+    }
+
+}
+
+class ContainerProductB : ContainerProduct() {
+
+    override fun action() {
+        println("ContainerProductB")
+    }
+
+}
+
+class MouldProductA : MouldProduct() {
+
+    override fun action() {
+        println("MouldProductA")
+    }
+
+}
+
+class MouldProductB : MouldProduct() {
+
+    override fun action() {
+        println("MouldProductB")
+    }
+
+}
+
+class FactoryFA : AbstractFactory {
+
+    override fun manufactureContainer(): AbstractProduct = ContainerProductA()
+
+    override fun manufactureMould(): AbstractProduct = MouldProductA()
+
+
+}
+
+class FactoryFB : AbstractFactory {
+
+    override fun manufactureContainer(): AbstractProduct = ContainerProductB()
+
+    override fun manufactureMould(): AbstractProduct = MouldProductB()
+
+}
+```
+
+**[Kotlin usage:](Kotlin/src/AbstractFactory.kt)**
+
+```kotlin
+val factoryA = FactoryFA()
+val factoryB = FactoryFB()
+
+factoryA.manufactureContainer().action()
+factoryA.manufactureMould().action()
+
+factoryB.manufactureContainer().action()
+factoryB.manufactureMould().action()
+```
+
+**[Swift example:](Swift/AbstractFactory.playground/Contents.swift)**
+
+```swift
+protocol AbstractFactory {
+    
+    func manufactureContainer() -> AbstractProduct
+    
+    func manufactureMould() -> AbstractProduct
+    
+}
+
+protocol AbstractProduct {
+    
+    func action()
+    
+}
+
+protocol ContainerProduct: AbstractProduct {
+    
+}
+
+protocol MouldProduct: AbstractProduct {
+    
+}
+
+class ContainerProductA: ContainerProduct {
+    
+    func action() {
+        print("ContainerProductA")
+    }
+    
+}
+
+class ContainerProductB: ContainerProduct {
+    
+    func action() {
+        print("ContainerProductB")
+    }
+    
+}
+
+class MouldProductA: MouldProduct {
+    
+    func action() {
+        print("MouldProductA")
+    }
+    
+}
+
+class MouldProductB: MouldProduct {
+    
+    func action() {
+        print("MouldProductB")
+    }
+    
+}
+
+class FactoryFA: AbstractFactory {
+    
+    func manufactureContainer() -> AbstractProduct {
+        return ContainerProductA()
+    }
+    
+    func manufactureMould() -> AbstractProduct {
+        return MouldProductA()
+    }
+    
+}
+
+class FactoryFB: AbstractFactory {
+    
+    func manufactureContainer() -> AbstractProduct {
+        return ContainerProductB()
+    }
+    
+    func manufactureMould() -> AbstractProduct {
+        return MouldProductB()
+    }
+    
+}
+```
+
+**[Swift usage:](Swift/AbstractFactory.playground/Contents.swift)**
+
+```swift
+let factoryA = FactoryFA()
+let factoryB = FactoryFB()
+
+factoryA.manufactureContainer().action()
+factoryA.manufactureMould().action()
+
+factoryB.manufactureContainer().action()
+factoryB.manufactureMould().action()
+```
 
 ### [Structural Patterns](#structural-patterns)
 > In software engineering, structural design patterns are design patterns that ease the design by identifying a simple way to realize relationships between entities.

@@ -1512,10 +1512,244 @@ factoryB.manufactureMould().action()
 > 
 > **Source: [wikipedia.org](https://en.wikipedia.org/wiki/Adapter_pattern)**
 
+**[Kotlin example:](Kotlin/src/Adapter.kt)**
+
+```kotlin
+interface Target {
+
+    fun request()
+
+}
+
+open class Adaptee {
+
+    fun specificRequest() {
+        println("Specific request")
+    }
+
+}
+
+class Adapter : Adaptee(), Target {
+
+    override fun request() {
+        this.specificRequest()
+    }
+
+}
+```
+
+**[Kotlin usage:](Kotlin/src/Adapter.kt)**
+
+```kotlin
+val adapter = Adapter()
+adapter.specificRequest()
+```
+
+**[Swift example:](Swift/Adapter.playground/Contents.swift)**
+
+```swift
+protocol Target {
+    
+    func request()
+    
+}
+
+class Adaptee {
+    
+    func specificRequest() {
+        print("Specific request")
+    }
+    
+}
+
+final class Adapter: Adaptee, Target {
+    
+    func request() {
+        self.specificRequest()
+    }
+    
+}
+```
+
+**[Swift usage:](Swift/Adapter.playground/Contents.swift)**
+
+```swift
+let adapter = Adapter()
+adapter.specificRequest()
+```
+
 #### [Decorator](#decorator)
 > In object-oriented programming, the decorator pattern is a design pattern that allows behavior to be added to an individual object, either statically or dynamically, without affecting the behavior of other objects from the same class.
 > 
 > **Source: [wikipedia.org](https://en.wikipedia.org/wiki/Decorator_pattern)**
+
+**[Kotlin example:](Kotlin/src/Decorator.kt)**
+
+```kotlin
+interface Component {
+
+    fun action()
+
+}
+
+class ConcreteComponent : Component {
+
+    override fun action() {
+        println("Base function")
+    }
+
+}
+
+abstract class Decorator(private val component: Component) : Component {
+
+    override fun action() {
+        component.action()
+    }
+
+}
+
+class ConcreteDecoratorA(component: Component) : Decorator(component) {
+
+    private val addedState: Int = 3
+
+    override fun action() {
+        println("ConcreteDecoratorA starts: Add new member addedState: $addedState")
+        super.action()
+        println("ConcreteDecoratorA ends")
+    }
+
+}
+
+class ConcreteDecoratorB(component: Component) : Decorator(component) {
+
+    private fun addedBehavior() {
+        println("ConcreteDecoratorB starts: Add new function addedBehavior()")
+    }
+
+    override fun action() {
+        addedBehavior()
+        super.action()
+        println("ConcreteDecoratorB ends")
+    }
+
+}
+```
+
+**[Kotlin usage:](Kotlin/src/Decorator.kt)**
+
+```kotlin
+var component: Component = ConcreteComponent()
+        component.action()
+
+        println("=============")
+
+        component = ConcreteDecoratorA(component)
+        component.action()
+
+        println("=============")
+
+        component = ConcreteDecoratorB(component)
+        component.action()
+
+        println("=============")
+
+        component = ConcreteDecoratorA(ConcreteDecoratorB(ConcreteComponent()))
+        component.action()
+```
+
+**[Swift usage:](Swift/Decorator.playground/Contents.swift)**
+
+```swift
+protocol Component {
+    
+    func action()
+    
+}
+
+class ConcreteComponent: Component {
+    
+    func action() {
+        print("Base function")
+    }
+    
+}
+
+class Decorator: Component {
+    
+    private var component: Component
+    
+    init(_ component: Component) {
+        self.component = component
+    }
+    
+    func action() {
+        component.action()
+    }
+    
+}
+
+class ConcreteDecoratorA: Decorator {
+    
+    private var component: Component
+    private let addedState: Int = 3
+    
+    override init(_ component: Component) {
+        self.component = component
+        super.init(component)
+    }
+    
+    override func action() {
+        print("ConcreteDecoratorA starts: Add new member addedState: \(addedState)")
+        
+        super.action()
+        print("ConcreteDecoratorA ends")
+    }
+    
+}
+
+class ConcreteDecoratorB : Decorator {
+    
+    private var component: Component
+    
+    override init(_ component: Component) {
+        self.component = component
+        super.init(component)
+    }
+    
+    private func addedBehavior() {
+        print("ConcreteDecoratorB starts: Add new function addedBehavior()")
+    }
+    
+    override func action() {
+        addedBehavior()
+        super.action()
+        print("ConcreteDecoratorB ends")
+    }
+    
+}
+```
+
+**[Swift usage:](Swift/Decorator.playground/Contents.swift)**
+
+```swift
+var component: Component = ConcreteComponent()
+component.action()
+
+print("=============")
+
+component = ConcreteDecoratorA(component)
+component.action()
+
+print("=============")
+
+component = ConcreteDecoratorB(component)
+component.action()
+
+print("=============")
+
+component = ConcreteDecoratorA(ConcreteDecoratorB(ConcreteComponent()))
+component.action()
+```
 
 #### [Facade](#facade)
 > A facade is an object that provides a simplified interface to a larger body of code, such as a class library.
